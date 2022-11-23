@@ -1,0 +1,62 @@
+Sub anton()
+'
+' anton Macro
+' Macros for account summaries
+'
+' Keyboard Shortcut: Ctrl+q
+'
+
+Dim MyRange As Range
+ 
+Set MyRange = Sheets(ActiveSheet.Name).UsedRange.Find("Date:")
+If Not MyRange Is Nothing Then
+   MyRange.Offset(0, 1).Value = Date
+Else
+    MsgBox "Not found"
+End If
+
+Dim shp As Shape
+For Each shp In ActiveSheet.Shapes
+    If shp.Type = msoTextBox Then
+       
+            shp.TextFrame.Characters.Text = "4000 Steeles Avenue West Unit 44A" & vbCrLf & "Vaughan, ON L4L 4V9" & vbCrLf & "P. 416.740.3484" & vbCrLf & "F. 416.740.3251" & vbCrLf & "www.mackenziemedical.com"
+            shp.TextFrame.Characters.Font.Name = "Calibri"
+            shp.TextFrame.Characters.Font.Size = 10.5
+    End If
+Next
+
+With ActiveSheet.PageSetup
+        .CenterFooter = "Page &P of &N"
+          
+    End With
+
+'Create and assign variables
+Dim saveLocation As String
+Dim Rng As Range
+ 
+Set Rng = Sheets(ActiveSheet.Name).UsedRange.Find("Patient Name:")
+
+PTNAME = Rng.Offset(0, 1).Value
+
+Set Rng = Sheets(ActiveSheet.Name).UsedRange.Find("Date of Loss:")
+
+DOL = Format(Rng.Offset(0, 1).Value, "m-d-yyyy")
+
+'Path = "C:\Users\Anton\Downloads\"
+
+Dim GetDownloadsPath As String
+GetDownloadsPath = Environ$("USERPROFILE") & "\Downloads\"
+
+Filename = PTNAME & " -DOL " & DOL & " - AS"
+
+
+saveLocation = GetDownloadsPath & Filename
+
+'Save Active Sheet(s) as PDF
+
+ActiveSheet.ExportAsFixedFormat Type:=xlTypePDF, _
+    Filename:=saveLocation
+
+ActiveSheet.SaveAs Filename:=saveLocation & NewFile
+
+End Sub
